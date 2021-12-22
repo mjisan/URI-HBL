@@ -1,2 +1,2 @@
-# URI_Hurricane_Boundary_Layer_Model
+# URI Hurricane Boundary Layer Model (URI-HBL)
 A three-dimensional boundary layer wind model to simulate surface wind for landfalling hurricanes. 
