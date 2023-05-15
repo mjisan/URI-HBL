@@ -1,0 +1,229 @@
+module mpp_io_boundary_uvbot_mod
+
+use shr_kind_mod,     only : r4 => shr_kind_r4
+
+use mpp_setup_mod,    only : size, master, rank
+use mpp_io_mod,       only : get_unit_num, error_handler
+use mpp_io_mod,       only : stdout
+use mpp_io_utils_mod, only : get_file_dims
+
+   implicit none
+
+   private
+
+   include 'netcdf.inc'
+
+   public :: read_boundary_uvbot, write_boundary_uvbot
+
+   character(LEN=48)  :: write_uvbot_file ! file name associated with write
+
+   character(LEN=32), parameter :: str_time= 'start_time'
+   character(LEN=32)            :: start_time
+
+   character(LEN=32), parameter :: x_name    = 'lons' ! name of x axis
+   character(LEN=32), parameter :: y_name    = 'lats' ! name of y axis
+   character(LEN=32), parameter :: rec_name  = 't'    ! name of time axis
+
+   integer, parameter :: ndims = 3 ! number of dimensions in netCDF file
+
+   integer :: start(ndims), count(ndims)
+
+   character(LEN=32) :: var_units  
+   character(LEN=32) :: lons_units = 'degrees'  
+   character(LEN=32) :: lats_units = 'degrees'  
+
+   character(LEN=32), parameter :: units = 'units'
+   character(LEN=48)            :: time_units
+
+!  create netCDF files, variables and dimensions and get back an ID for each
+   integer, dimension(ndims) :: dimids
+   integer :: ncid, lons_dimid, lats_dimid, rec_dimid
+
+   integer :: lons_varid
+   integer :: lats_varid
+   integer :: rec_varid
+   integer :: uvbot_varid
+
+!  loop indexes, and error handling
+   integer :: i, j, k, retval, rec, id
+
+   logical :: first_time_read  = .true. 
+   logical :: first_time_write = .true. 
+
+contains
+
+subroutine read_boundary_uvbot ( read_uvbot_file )
+
+   character(LEN=*), intent(in) :: read_uvbot_file 
+   integer :: ncid
+
+   if ( first_time_read == .true. ) then
+
+!    open netCDF file
+     retval = nf_open(read_uvbot_file, nf_nowrite, ncid)
+
+     retval =  nf_get_att_text(ncid, nf_global, TRIM(str_time), start_time)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'read_boundary_uvbot/nf_get_att_text/start_time' )
+
+!    close netcdf file
+     retval = nf_close(ncid)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'read_boundary_uvbot' )
+
+     first_time_read = .false.
+
+   endif
+
+end subroutine read_boundary_uvbot
+
+subroutine write_boundary_uvbot ( uvbot, lons, lats, time, recs, nx, ny )
+
+   real(KIND=r4), dimension(nx,ny), intent(inout) :: uvbot
+   real(KIND=r4), dimension(nx)   , intent(in)    :: lons
+   real(KIND=r4), dimension(ny)   , intent(in)    :: lats
+   real(KIND=r4),                   intent(in)    :: time
+   integer,                         intent(in)    :: recs
+   integer,                         intent(in)    :: nx
+   integer,                         intent(in)    :: ny
+
+   namelist /uvbot_write/ write_uvbot_file
+
+!  loop indexes, and error handling
+   integer :: i, j, k, retval, rec, id, io, io_unit
+
+   if ( first_time_write == .true. ) then
+!    set uvbot file name
+     call get_unit_num ( io_unit )
+
+     open (io_unit,FILE='input.nml',STATUS='UNKNOWN')
+     read (io_unit,NML=uvbot_write)
+     close(io_unit,STATUS='KEEP')
+
+     if ( rank == master ) then
+       write(stdout, 1000) write_uvbot_file
+1000 format( 2x, 'name of uvbot file written in: write_boundary_uvbot = ', a32 )
+     endif
+
+!    create netCDF file, overwrite if already exists
+     call write_boundary_uvbot_state(1)
+
+!    define the dimensions for each axis and get back ID for each
+     retval = nf_def_dim(ncid, x_name, nx, lons_dimid  )
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_def_dim/lons_dimid' )
+
+     retval = nf_def_dim(ncid, y_name, ny, lats_dimid  )
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_def_dim/lats_dimid' )
+
+     retval = nf_def_dim(ncid, rec_name, NF_UNLIMITED, rec_dimid)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_def_dim/rec_dimid' )
+
+!    define coordinate variables
+     retval = nf_def_var(ncid, x_name, NF_REAL, 1, lons_dimid, lons_varid)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_def_var/lons_varid' )
+
+     retval = nf_def_var(ncid, y_name, NF_REAL, 1, lats_dimid, lats_varid)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_def_var/lats_varid' )
+
+!    assign units attributes to coordinate variable data
+     retval = nf_put_att_text(ncid, lons_varid, UNITS, len(TRIM(lons_units)), TRIM(lons_units))
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_att_text/lons_units' )
+
+     retval = nf_put_att_text(ncid, lats_varid, UNITS, len(TRIM(lats_units)), TRIM(lats_units))
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_att_text/lats_units' )
+
+     var_units = 'hours'
+     retval = nf_put_att_text(ncid, rec_varid, UNITS, len(TRIM(var_units)),TRIM(var_units))
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_att_text/var_units' )
+
+     time_units = TRIM(start_time)
+
+     retval = nf_put_att_text(ncid, nf_global, str_time, len(TRIM(time_units)), TRIM(time_units))
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_att_text/time_units' )
+
+!    the dimids array is used to pass the ID of the dimensions of the variables. note that in fortran
+!    arrays are stored in column-major
+     dimids(1) = lons_dimid
+     dimids(2) = lats_dimid
+     dimids(3) = rec_dimid
+
+!    define the attributes for var
+
+     retval = nf_def_var(ncid, 'time', NF_REAL, 1, rec_dimid, rec_varid )
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_def_var/rec_varid' )
+
+     retval = nf_def_var(ncid, 'uvbot', NF_REAL, ndims, dimids, uvbot_varid )
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_def_var/uvbot_varid' )
+
+!    define the units for var
+
+     var_units = 'degrees'
+     retval = nf_put_att_text(ncid, lons_varid, UNITS, len(TRIM(var_units)), var_units)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_att_text/var_units' )
+  
+     var_units = 'degrees'
+     retval = nf_put_att_text(ncid, lats_varid, UNITS, len(TRIM(var_units)), var_units)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_att_text/var_units' )
+ 
+     var_units = 'm/s' 
+     retval = nf_put_att_text(ncid, uvbot_varid, UNITS, len(TRIM(var_units)), var_units)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_att_text/var_units' )
+  
+!    end define mode; this tells netCDF we are done defining metadata
+     retval = nf_enddef(ncid)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_enddef' )
+
+!    put axes data
+     retval = nf_put_var_REAL(ncid, lons_varid, lons)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_var_REAL/lons_axis' )
+
+     retval = nf_put_var_REAL(ncid, lats_varid, lats)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_var_REAL/lats_axis' )
+
+     first_time_write = .false.
+   else
+!  open netCDF file
+     call write_boundary_uvbot_state(2)
+   endif
+
+   count(1) = nx
+   count(2) = ny
+   count(3) = 1 
+   start(1) = 1
+   start(2) = 1
+   start(3) = recs
+
+!  put var data
+   retval = nf_put_var1_REAL(ncid, rec_varid, recs, time)
+   if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_var_REAL/time' )
+   
+   retval = nf_put_vara_REAL(ncid, uvbot_varid, start, count, uvbot)
+   if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot/nf_put_var_REAL/uvbot' )
+
+   call write_boundary_uvbot_state(3)
+
+end subroutine write_boundary_uvbot
+
+subroutine write_boundary_uvbot_state(case)
+   integer, intent(in) :: case
+   integer :: retval
+
+   select CASE(case)
+     CASE(1)
+!    create netCDF file, overwrite if already exists
+     retval = nf_create(write_uvbot_file, nf_clobber, ncid)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot_state/nf_create' )
+
+     CASE(2)
+!    open netCDF file
+     retval = nf_open(write_uvbot_file, nf_write, ncid)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot_state/nf_open' )
+
+     CASE(3)
+!    close netCDF file
+     retval = nf_close(ncid)
+     if (retval .NE. 0) call error_handler ( 'ERROR', 'write_boundary_uvbot_state/nf_close' )
+
+    end select
+
+end subroutine write_boundary_uvbot_state
+
+end module mpp_io_boundary_uvbot_mod
