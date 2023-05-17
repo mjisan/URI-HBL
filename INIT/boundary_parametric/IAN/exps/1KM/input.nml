@@ -1,0 +1,26 @@
+&storm_stats
+ storm_name                  = 'florence'
+ storm_track_file            = 'INPUT/track_file_florence'
+ storm_start_time = '2022-09-26 06:00:00 +00:00' 
+ storm_wind_scale_ratio_file = 'INPUT/storm_wind_scale_ratio.txt'
+/
+
+&parametric
+  param_file = 'OUTPUT/boundary_parametric.nc'
+/
+
+&topog_elevation
+  topog_null = -9999
+/
+
+&topog_file
+  topog_name = GMTED2010_7arc_sec_north_america.nc
+/
+
+&roughness_land
+  const_land_rough = 0.0
+/
+
+&rough_file
+land_rough_name = land_roughness_modis_0.5km_wrf_tbl.nc
+/
