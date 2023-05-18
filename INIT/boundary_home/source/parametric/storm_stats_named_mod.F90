@@ -10,7 +10,7 @@ use storm_stats_utils_mod,only : storm_stats_init, date_to_day, horiz_interp, &
 use grid_mod,             only : nx, ny, icen, jcen, rpts
 use constants_mod,        only : pie, deg2rad, rearth, rhoair, fcor
 
-!#define DEBUG 1
+#define DEBUG 1
 
 implicit none
 private
@@ -27,8 +27,9 @@ real(KIND=r4) :: xcen_init, ycen_init
 contains
 
 subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, ycen, xcor, ycor, &
-                       utx, uty, n, rmax, wsmax, storm_name, storm_track_file, storm_start_time, & 
+                       utx, uty, n, rmax, wsmax, storm_name, storm_track_file, storm_start_time, &
                                                  storm_wind_scale_ratio_file, wind_scale_ratio)
+
 
    real(KIND=r4), dimension(nx),    intent(in)  :: xgrid
    real(KIND=r4), dimension(ny),    intent(in)  :: ygrid
@@ -149,11 +150,15 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
    do i=1,nlines
      select case (storm_name)
 
-       case ('bob')
+!       case ('flo')
+!         read (unit_track,1000) id, name_a3, date, hour, lat, ns, lon, ew, garb, mx, rmw, rd1, rd2
+!1000   format (a6, 2x, a3, 2x, i8, 1x, i4, 1x, i3, a1, 1x, 1x, i3, a1, 1x, i3, 1x, i3, 3i5,  &
+!               1x, i2, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3)
+       case ('flo')
          read (unit_track,1000) id, name_a3, date, hour, lat, ns, lon, ew, garb, mx, rmw, rd1, rd2
-1000   format (a6, 2x, a3, 2x, i8, 1x, i4, 1x, i3, a1, 1x, 1x, i3, a1, 1x, i3, 1x, i3, 3i5,  &
+1000   format (a6, 2x, a3, 2x, i8, 1x, i4, 1x, i6, a1, 1x, 1x, i3, a1, 1x, i3, 1x, i3, 3i5,  &
                1x, i2, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3)
-
+         
        case ('rhody')
          read (unit_track,2000) id, name_a5, date, hour, lat, ns, lon, ew, garb, mx, rmw, rd1, rd2
 2000   format (a6, 2x, a5, 2x, i8, 1x, i4, 1x, i3, a1, 1x, i3, a1, 1x, i3, 1x, i3, 3i5,  &
@@ -181,7 +186,7 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
 
        case ('florence')
          read (unit_track,7000) id, name_a4, date, hour, lat, ns, lon, ew, garb, mx, rmw, rd1, rd2
-7000   format (a3, 2x, a8, 2x, i8, 1x, i4, 1x, i3, a1, 1x, i3, a1, 1x, i3, 1x, i3, 3(i4, 1x), &
+7000   format (a3, 2x, a8, 2x, i8, 1x, i4, 1x, i3, a1, 1x, i3, a1, 1x, i3, 1x, i3, 1x, 3(i4, 1x), &
                1x, i3, 1x, i3, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4)
 
        case ('track')
@@ -193,6 +198,14 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
          read (unit_track,9000) id, name_a4, date, hour, lat, ns, lon, ew, garb, mx, rmw, rd1, rd2
 9000   format (a3, 1x, a6, 1x, i8, 1x, i4, 1x, i3, a1, 1x, i3, a1, 1x, i3, 1x, i3, 3(i4, 1x), &
                1x, i3, 1x, i3, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4)
+
+!      case ('florencd')
+!         read (unit_track,10000) id, name_a4, date, hour, lat, ns, lon, ew, garb, mx, rmw, rd1, rd2
+!10000   format (a3, 1x, a6, 1x, i8, 1x, i4, 1x, i6, a1, 1x, i3, a1, 1x, i3, 1x, i3, 3(i4, 1x), &
+!               1x, i3, 1x, i3, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4, 1x, i4)
+!         read (unit_track,1000) id, name, date, hour, lat, ns, lon, ew, garb, mx, rmw, rd1, rd2
+!1000   format (a6, 2x, a3, 2x, i8, 1x, i4, 1x, i6, a1, 1x, 1x, i3, a1, 1x, i3, 1x, i3, 3i5,  &
+!               1x, i2, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3, 1x, i3)
 
      
      end select
@@ -219,8 +232,10 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
      call date_to_day( year, julday, date)
      tm(i) = julday               ! julian Day Number
      x(i)  = lon/10.0_r4          ! eastern hemsiphere
-     y(i)  = lat/10.0_r4          ! northern hemisphere
+     y(i)  = lat/10000.0_r4          ! northern hemisphere
 
+     print *, y
+     
      if (ew .eq. 'W') x(i)=-x(i)  ! western hemisphere
      if (ns .eq. 'S') y(i)=-y(i)  ! southern hemisphere
 
@@ -229,7 +244,9 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
      radcls(i) = float(garb(5))*1000
      wspmax(i) = float(mx)
      rmaxa(i)  = float(rmw)
-
+!     print *, pres
+!     print *, pres0
+     
 !    reformatting the four quadrant radius of 18 and 26 m/s wind.
 !    end format will be a table with rows for each TCvitals timestep and columns for the four quadrants   
 
@@ -287,7 +304,10 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
    call horiz_interp (nlines, 1, tm, pres0,  timev, pres2)
    call horiz_interp (nlines, 1, tm, radcls, timev, rcls)
    delp=(pres2-pres1)*100.0_r4
-        
+
+!     print *, pres2
+!     print *, pres1
+
    if ( delp .lt. 100.0_r4 ) delp = 100.0_r4
    call horiz_interp (nlines, 1, tm, wspmax, timev, wsmax)
    prsmin = pres1
@@ -436,7 +456,7 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
   b = 1.3_r4
   a7 = rmax**b
   c = (b/e)**0.5
-  delp = (wsmax/c)**2
+ delp = (wsmax/c)**2
 
    do i=1,14
      radm(i) = rmax*rad(i)
@@ -545,15 +565,11 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
          wnd1=expwind_poly(r, rmax, rref18, rref26, wsmax, ws18, ws26, n)
          wnd2=expwind_expo(r, rmax, rref18, rref26, wsmax, ws18, ws26)
 
-
-         
-
          if (wnd2 .lt. wnd1) then
             wnd = wnd2
          else
             wnd = wnd1
-         end if
-         
+         end if   
          ! translation speed
          utxa = 0.0_r4
          utya = 0.0_r4
@@ -573,8 +589,8 @@ subroutine storm_stats_named (xgrid, ygrid, time, ubot, vbot, pres_sea, xcen, yc
        wm         = SQRT(wx*wx + wy*wy)
 
        wind_scale = 1.0
-       wndx(i,j)= wx + utx
-       wndy(i,j)= wy + uty
+       wndx(i,j)= wx + 0.0
+       wndy(i,j)= wy + 0.0
 
      enddo 
    enddo 

@@ -590,7 +590,7 @@ subroutine model_init ( um, vm, wm, pgfx1, pgfy1, mask1 )
      enddo
    enddo
  
-!  using ocean only during spin up
+!  using water only during spin up
    do j=1,ny
      do i=1,nx
        mask1(i,j) = 0.0_r8

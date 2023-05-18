@@ -238,7 +238,7 @@ function expwind_poly (r, rmax, rref18, rref26, wsmax, ws18, ws26, n )
 
    n2 = abs(log10(r1/rmax))
 
-   n  = 0.7
+   n  = n1/n2
 
 
    if(rref18 .le. 0.0_r4) then
