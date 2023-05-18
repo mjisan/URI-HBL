@@ -593,7 +593,7 @@ subroutine model_init ( um, vm, wm, pgfx1, pgfy1, mask1 )
 !  using ocean only during spin up
    do j=1,ny
      do i=1,nx
-       mask1(i,j) = 0.0_r8
+       mask1(i,j) = 1.0_r8
      enddo
    enddo
 
