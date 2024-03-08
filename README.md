@@ -17,28 +17,27 @@ $$
 
 
 
-Where u, v, and w are wind components in x, y and z directions, respectively. $f$ represents the Coriolis frequency; $P$ represents the pressure, and $\rho_o$ is the density the density kept constant.The vertical diffusion in the HBL model is parametrized based on Louis et al., (1982) PBL parametrization scheme. The neutral version of the Louis scheme is applied in this study.  
+Where $u$, $v$, and $w$ are wind components in x, y, and z directions, respectively. $f$ represents the Coriolis frequency; $P$ represents the pressure, and $\rho_o$ is the density kept constant. The vertical diffusion in the HBL model is parametrized based on Louis et al., (1982) PBL parametrization scheme. The neutral version of the Louis scheme is applied in this study.
 
 
-
-\begin{equation}
+$$
 K_z = l^2 \cdot S \cdot f(Ri)
-\end{equation}
+$$
 
-where l represents the mixing length, S represents the magnitude of the vertical wind shear, and Ri is the gradient Richardson number. The wind in the HBL model is shear driven and parametrized as 
+where $l$ represents the mixing length, $S$ represents the magnitude of the vertical wind shear, and $Ri$ is the gradient Richardson number. The wind in the HBL model is shear-driven and parametrized as
 
-\begin{equation}
+$$
 S^2= \left(\frac{\partial u}{\partial z}\right)^2 + \left(\frac{\partial v}{\partial z}\right)^2
-\end{equation}
+$$
 
+Mixing length $l$ is parametrized using Blackadar (1962) scheme:
 
-Mixing length l is parametrized using Blackadar (1962) scheme. 
-
-\begin{equation}
+$$
 \frac{1}{l} = \frac{1}{\kappa z} + \frac{1}{l_{\infty}}
-\end{equation}
+$$
 
-where κ is Von Karman’s constant (κ = 0.4) and l_∞ is the asymptotic mixing length. Following the previous studies by Kepert (2011), Gao & Ginis (2014),Gao & Ginis (2016) in this paper, the asymptotic mixing length is set as, l_∞ = 80 m. We use a moving coordinate system, as was done in previous studies by Kepert and Wang, (2001) & Gao and Ginis (2018), in which the mesh moves with the center position of the storm, keeping it stationary relative to the mesh. The HBL model uses a rectilinear grid system with horizontal and vertical spacing of 1km and 30m; respectively. The model grid consists of 1800 x 1800 grid points in zonal and meridional direction. The vertical extent of the grid is 3km. The timestep in the model is set as 1 second.
+where $\kappa$ is Von Karman’s constant ($\kappa = 0.4$) and $l_{\infty}$ is the asymptotic mixing length. Following the previous studies by Kepert (2011), Gao & Ginis (2014), Gao & Ginis (2016), in this paper, the asymptotic mixing length is set as $l_{\infty} = 80$ m. We use a moving coordinate system, as was done in previous studies by Kepert and Wang, (2001) & Gao and Ginis (2018), in which the mesh moves with the center position of the storm, keeping it stationary relative to the mesh. The HBL model uses a rectilinear grid system with horizontal and vertical spacing of 1km and 30m, respectively. The model grid consists of 1800 x 1800 grid points in the zonal and meridional direction. The vertical extent of the grid is 3km. The timestep in the model is set as 1 second.
+
 
 ## Required Libraries for the HBL Model
 
