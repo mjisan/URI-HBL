@@ -82,6 +82,36 @@ To compile the HBL model on the URI Andromeda Cluster, ensure the following modu
 Load these modules before attempting to compile and run the HBL model to ensure compatibility and optimal performance.
 
 
+# Running the HBL Model
+
+## Boundary Condition
+
+To generate the boundary condition in the HBL model, we first create a gradient wind using the parametric wind model. The parametric wind source code is located within the boundary_home/source/parametric directory. An example of how to compile and run the parametric code is given below:
+
+### (a) Configuration of model grid
+
+- go to boundary_parametric/IAN/exps/1KM/GRIDS
+- open grid_mod.F90
+- The number of grid in X and Y directions are assigned in nx and ny parameter. Whichever the number of grid points we plan to use, the nx and ny needs to be 1 point less than that. For this example, we will be using 1802 x 1802 grid points. So we defined nx and ny as 1801. 
+
+- The resolution of the model is defined by setting stepx and stepy. For this exercise, we used 1km resolution. So, set stepx and stepy to 1000.
+
+### (a) Configuration of output interval
+
+- The model output intervals are set in the time_mod.F90 file which is located in the same directory as the grid_mod.F90
+- We will be running the forecast for 31 hours. so nrecs is set as 31
+- delt represents how often the outputs we want to save. In this exercise, we will use delt = 3600 . So we will be saving output every 1 hour interval
+
+
+
+
+
+
+
+
+
+
+
 
 ```python
 
