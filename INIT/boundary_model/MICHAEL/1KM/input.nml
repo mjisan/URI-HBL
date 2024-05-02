@@ -1,0 +1,17 @@
+&model
+  pmix_len         = 8.0e+01 ! mixing length
+  turh             = 5.0e+04 ! turbulence coefficient
+  storm_name = 'florence'
+  bot_top    = .false.
+  check_bound_time_beg = -1.0
+  check_bound_time_end = -1.0
+/
+&diagnostics
+ diag_file = 'OUTPUT/boundary_model_land_michaelv2_hr.nc' 
+/
+&parametric
+  param_file = 'INPUT/boundary_parametric_comb_ld_hr.nc'
+/
+&model1
+  model_file = 'INPUT/boundary_new1.nc'
+/

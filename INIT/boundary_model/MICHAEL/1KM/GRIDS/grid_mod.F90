@@ -1,0 +1,21 @@
+module grid_mod
+
+use shr_kind_mod,  only : r4 => shr_kind_r4
+use shr_kind_mod,  only : r8 => shr_kind_r8
+
+  integer, parameter :: ngx=1802           ! number of x-points in global domain
+  integer, parameter :: ngy=1802          ! number of y-points in global domain
+
+  integer, parameter :: npx=12             ! number of MPI-Ranks in x-dimension
+  integer, parameter :: npy=40            ! number of MPI-Ranks in x-dimension
+
+  integer, parameter :: nx=(ngx-2)/npx + 2 ! number of x-point in local domain
+  integer, parameter :: ny=(ngy-2)/npy + 2 ! number of y-point in local domain
+  integer, parameter :: nz=101             ! number of point in vertical
+
+  real(KIND=r8), parameter :: stepx=1.0E03 ! grid spacing in x-dimension
+  real(KIND=r8), parameter :: stepy=1.0E03 ! grid spacing in y-dimension
+  real(KIND=r8), parameter :: stepz=3.0E01 ! grid spacing in z-dimension
+
+end module grid_mod
+
