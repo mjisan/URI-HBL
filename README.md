@@ -82,6 +82,14 @@ To compile the HBL model on the URI Andromeda Cluster, ensure the following modu
 Load these modules before attempting to compile and run the HBL model to ensure compatibility and optimal performance.
 
 
+# URI-HBL Directory Structure
+
+<img src="http://uri-hurricanes.info/hbl-directory.svg" alt="URI-HBL Directory Structure" width="1000">
+
+
+
+
+
 # Running the HBL Model
 
 ## Boundary Condition
