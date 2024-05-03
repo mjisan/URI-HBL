@@ -138,15 +138,15 @@ To generate the boundary condition in the HBL model, we first create a gradient 
 
 - First step in running the model is to copy the gradient wind file from the `boundary_parametric/MICHAEL/exps/1KM/OUTPUT` directory to the `boundary_model/MICHAEL/1KM/INPUT/` directory.
 
-
 - The second step is to modify the `time_mod.F90` and `grid_mod.F90` files in the GRIDS directory and define the MPI ranks `npx` and `npy` in the X and Y directions. 
 
+- We also need to adjust the parameters, i.e., define the name of the input file `param_file` and the initial condition file name in the `model_file` section in the `input.nml`. The initial condition file generation will be discussed in a later release of the code.  
 
-- We also need to adjust the parameters, i.e., defining the name of the input file `param_file` as well as defining the name of the initial condition file name in the `model_file` section in the `input.nml` . The initial condition file generation will be discussed in a later release of the code.  
-
+- The output parameters are defined in the diag_table file. `ubot` and `vbot` are the surface wind components, `um`, `vm` and `wm` are three dimensional wind fields. `znot` is the land roughness   
 
 - Once we define all the necessary inputs, we compile the code using `./build_model.bash` and run the job using `./run_model.bash` script
 
+- During the runtime, each MPI ranks will generate simulation output in NetCDF format in the `/OUTPUT` directory. We combine these outputs at the end of simulation using a program called `mppcombine`. The script that does it is named `./run_combine.bash`
 
 
 
