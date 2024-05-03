@@ -84,7 +84,7 @@ Load these modules before attempting to compile and run the HBL model to ensure 
 
 # URI-HBL Directory Structure
 
-<img src="http://uri-hurricanes.info/hbl-directory.svg" alt="URI-HBL Directory Structure" width="1000">
+<img src="http://uri-hurricanes.info/hbl_directory.svg" alt="URI-HBL Directory Structure" width="1000">
 
 
 
