@@ -92,23 +92,52 @@ Load these modules before attempting to compile and run the HBL model to ensure 
 
 # Running the HBL Model
 
-## Boundary Condition
+## Initial and Boundary Condition
 
-To generate the boundary condition in the HBL model, we first create a gradient wind using the parametric wind model. The parametric wind source code is located within the boundary_home/source/parametric directory. An example of how to compile and run the parametric code is given below:
+**work directory: boundary_parametric/MICHAEL/exps/1KM**
+
+To generate the boundary condition in the HBL model, we first create a gradient wind using a parametric wind model. The parametric wind source code is located within the boundary_home/source/parametric directory. An example of how to compile and run the parametric code is given below:
 
 ### (a) Configuration of model grid
 
-- go to boundary_parametric/IAN/exps/1KM/GRIDS
+- go to boundary_parametric/MICHAEL/exps/1KM/GRIDS
 - open grid_mod.F90
-- The number of grid in X and Y directions are assigned in nx and ny parameter. Whichever the number of grid points we plan to use, the nx and ny needs to be 1 point less than that. For this example, we will be using 1802 x 1802 grid points. So we defined nx and ny as 1801. 
+- The number of grid in X and Y directions are assigned in nx and ny parameter. Whichever the number of grid points we plan to use, the nx and ny needs to be 1 point less than that (this is related to the distribution to MPI ranks). For this example, we will be using 1802 x 1802 grid points. So we defined nx and ny as 1801. 
 
 - The resolution of the model is defined by setting stepx and stepy. For this exercise, we used 1km resolution. So, set stepx and stepy to 1000.
 
-### (a) Configuration of output interval
+### (b) Configuration of output interval
 
 - The model output intervals are set in the time_mod.F90 file which is located in the same directory as the grid_mod.F90
-- We will be running the forecast for 31 hours. so nrecs is set as 31
+- We will be running the forecast for 60 hours. so nrecs is set as 60
 - delt represents how often the outputs we want to save. In this exercise, we will use delt = 3600 . So we will be saving output every 1 hour interval
+
+### (c) Input gradient wind track file
+
+- The HBL model requires the input hurricane vortex parameters for the gradient wind. 
+- The gradient wind parameters for Hurricane Michael is given in track_file_michael file in the /INPUT directory.
+
+### (d) Namelist
+
+- The input.nml file includes the namelist parameters for the parametric code. 
+- We define the land roughness (land_rough_name) and land cover (topog_name) file in the input.nml.
+- In addition the simulation start time needs to be defined.
+
+
+### (e) Running the Parametric Code
+
+- After defining all the input parameters, we first compile the code using ./build_parametric.bash and run the model by submitting run_parametric.bash scripts. Please note, these scripts need to be adjusted based on your system configuaration. 
+
+- After successfull run, we should see the output file in the /OUTPUT directory. The file name should be boundary_parametric.nc as defined in the input.nml namelist file. 
+
+
+
+
+
+
+
+
+
 
 
 
