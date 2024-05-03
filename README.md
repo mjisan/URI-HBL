@@ -132,7 +132,20 @@ To generate the boundary condition in the HBL model, we first create a gradient 
 
 
 
+# HBL Model Simulation
 
+**work directory: `boundary_model/MICHAEL/1KM`**
+
+- First step in running the model is to copy the gradient wind file from the `boundary_parametric/MICHAEL/exps/1KM/OUTPUT` directory to the `boundary_model/MICHAEL/1KM/INPUT/` directory.
+
+
+- second step is to modify the `time_mod.F90` and `grid_mod.F90` files in the GRIDS directory. Also, to define the MPI ranks `npx` and `npy` in X and Y direction. 
+
+
+- We also need to adjust the parameters i.e. defining the name of input file `param_file` as well as defining the name of the initial condition file name in the `model_file` section in the  `input.nml` . The initial condition file generation will be discussed in a later release of the code.  
+
+
+- Once we define all the necessary inputs, we compile the code using `./build_model.bash` and run the job using `./run_model.bash` script
 
 
 
