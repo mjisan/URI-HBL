@@ -126,9 +126,9 @@ To generate the boundary condition in the HBL model, we first create a gradient 
 
 ### (e) Running the Parametric Code
 
-- After defining all the input parameters, we first compile the code using ./build_parametric.bash and run the model by submitting run_parametric.bash scripts. Please note, these scripts need to be adjusted based on your system configuaration. 
+- After defining all the input parameters, we first compile the code using `./build_parametric.bash` and run the model by submitting `run_parametric.bash` scripts. Please note that these scripts need to be adjusted based on your system configuration.
 
-- After successfull run, we should see the output file in the /OUTPUT directory. The file name should be boundary_parametric.nc as defined in the input.nml namelist file. 
+- After a successful run, we should see the output file in the /OUTPUT directory. The file name should be boundary_parametric.nc as defined in the input.nml namelist file. 
 
 
 
